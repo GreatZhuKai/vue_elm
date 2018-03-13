@@ -10,6 +10,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
+// 虚拟数据获取(加的)
+const appData = require('../data.json')
+const seller = appData.seller
+const goods = appData.goods
+const ratings = appData.ratings
+//
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
@@ -22,6 +28,28 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    //data.json里面的数据获取(加的) 
+    before(app) {
+      app.get('./api/seller',function(req,res) {
+        res.json({
+          reeno:0,
+          data:seller
+        })
+      });
+      app.get('/api/goods', function(req, res) {
+        res.json({
+          errno: 0,
+          data: goods
+        })
+      });
+      app.get('/api/ratings', function(req, res) {
+        res.json({
+          errno: 0,
+          data: ratings
+        })
+      });
+    },
+    //
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [
