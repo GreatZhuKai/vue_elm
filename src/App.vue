@@ -33,14 +33,16 @@ export default {
       // get body data
       this.response = response.body;
       console.log(response);
-      if(response.errno === ERR_OK) {
-        seller = response.data;
-        console.log(seller);
-
-        // Object.assign()方法用于将所有可枚举自己的属性的值从一个或多个源对象复制到目标对象。它会返回目标对象
-        // this.seller = Object.assign({}, this.seller, response.data);
-        // console.log(seller);
-      }
+      this.seller = this.response.data;
+      console.log(this.seller);
+      // if(response.errno === ERR_OK) {
+      //   this.seller = response.data;
+      //   console.log(seller);
+      //   //或者：
+      //   // Object.assign()方法用于将所有可枚举自己的属性的值从一个或多个源对象复制到目标对象。它会返回目标对象
+      //   // this.seller = Object.assign({}, this.seller, response.data);
+      //   // console.log(response);
+      // }
     })
   },
   // 注册标签
