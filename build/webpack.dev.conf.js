@@ -30,9 +30,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   devServer: {
     //data.json里面的数据获取(加的) 
     before(app) {
-      app.get('./api/seller',function(req,res) {
+      app.get('/api/seller',function(req,res) {
         res.json({
-          reeno:0,
+          errno:0,
           data:seller
         })
       });
