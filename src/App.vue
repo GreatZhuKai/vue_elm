@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
     <div class="tab border-1px">
       <div class="tab-item">
         <router-link to="/goods">商品</router-link>
@@ -34,11 +34,13 @@ export default {
       this.response = response.body;
       console.log(response);
       if(response.errno === ERR_OK) {
-        this.seller = response.data;
-        console.log(this.seller);
+        seller = response.data;
+        console.log(seller);
+
+        // Object.assign()方法用于将所有可枚举自己的属性的值从一个或多个源对象复制到目标对象。它会返回目标对象
+        // this.seller = Object.assign({}, this.seller, response.data);
+        // console.log(seller);
       }
-    }, response => {
-       // error callback
     })
   },
   // 注册标签
