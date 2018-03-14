@@ -38,7 +38,7 @@ export default {
         console.log(this.seller);
       }
     }, response => {
-      // error callback
+       // error callback
     })
   },
   // 注册标签
