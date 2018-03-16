@@ -19,6 +19,7 @@
         type: Number
       }
     },
+    
     computed: {
       starType() {
         return 'star-' + this.size;
