@@ -13,41 +13,67 @@
           {{seller.description}}/{{seller.deliveryTime}}分钟送达
         </div>
         <div v-if="seller.supports" class="support">
-          <span class="icon" :class="classMap[seller.supports[x].type]"></span>
-          <span class="text">{{seller.supports[x].description}}</span>
+          <span class="icon" :class="classMap[seller.supports[num].type]"></span>
+          <span class="text">{{seller.supports[num].description}}</span>
         </div>
       </div>
-      <div v-if="seller.supports" class="support-content">
+      <div v-if="seller.supports" class="support-content" @click="showDetail">
         <span class="count">{{seller.supports.length}}个</span>
         <i class="icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="showDetail">
       <span class="bulletin-title"></span><span class="bulletin-text">{{seller.bulletin}}</span>
       <i class="icon-keyboard_arrow_right"></i>
     </div>
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
+    <div v-show="detailShow" class="detail" @click="hideDetail">
+      <div class="detail-wrapper clearfix">
+        <div class="detail-main">
+          <h1 class="name">{{seller.name}}</h1>
+        </div>
+      </div>
+      <div class="detail-close">
+        <i class="icon-close"></i>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+// const num = 0;
 export default {
   props: {
     seller:{
       type:Object
     }
   },
+  data() {
+    return {
+      num: 2,
+      detailShow:false
+    }
+  },
+  methods:{
+    showDetail() {
+      this.detailShow = true;
+    },
+    hideDetail() {
+      this.detailShow = false;
+    }
+  },
   created() {
-    this.x = 2
     this.classMap = ['decrease','discount','special','invoice','guarantee'];
+    this.num = this.data.num //设置公告的内容
   }
 }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
 @import "../../common/stylus/mixin.styl"
+@import "../../common/stylus/base.styl"
 .header
   overflow hidden
   position: relative
@@ -160,4 +186,31 @@ export default {
     height 100%
     z-index -1 // 设置背景图片为头像
     filter blur(10) //filter定义元素可视效果,blur给图像设置高斯模糊
+  .detail
+    position fixed //相对于浏览器窗口进行定位
+    z-index 100
+    top 0
+    left 0
+    width 100%
+    height 100%
+    overflow auto //如果内容被修剪,则浏览器会显示滚动条以便查看其余的内容
+    background rgba(7,17,27,0.8)
+  .detail-wrapper
+    width 100%
+    min-height 100%
+    .detail-main
+      margin-top 64px
+      padding-bottom 64px
+      .name
+        line-height 16px
+        text-align center
+        font-size 16px
+        font-weight 700
+    .detail-close
+      position relative
+      width 32px
+      height 32px
+      margin -64px auto 0 auto
+      clear both
+      font-size 32px
 </style>
