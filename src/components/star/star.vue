@@ -19,13 +19,14 @@
         type: Number
       }
     },
-    
+
     computed: {
       starType() {
         return 'star-' + this.size;
       },
       itemClasses() {
         let result = [];
+        // 向下取整
         let score = Math.floor(this.score * 2) / 2;
         let hasDecimal = score % 1 !== 0;
         let integer = Math.floor(score);
