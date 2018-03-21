@@ -32,9 +32,9 @@ export default {
     this.$http.get('/api/seller').then((response) => {
       // get body data
       this.response = response.body;
-      console.log(response);
+      // console.log(response);
       this.seller = this.response.data;
-      console.log(this.seller);
+      // console.log(this.seller);
       // if(response.errno === ERR_OK) {
       //   this.seller = response.data;
       //   console.log(seller);
