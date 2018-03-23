@@ -13,8 +13,8 @@
           {{seller.description}}/{{seller.deliveryTime}}分钟送达
         </div>
         <div v-if="seller.supports" class="support">
-          <span class="icon" :class="classMap[seller.supports[num].type]"></span>
-          <span class="text">{{seller.supports[num].description}}</span>
+          <span class="icon" :class="classMap[seller.supports[1].type]"></span>
+          <span class="text">{{seller.supports[1].description}}</span>
         </div>
       </div>
       <div v-if="seller.supports" class="support-content" @click="showDetail">
@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      num: 2,
+      // num: 2,
       detailShow:false
     }
   },
@@ -89,7 +89,7 @@ export default {
   },
   created() {
     this.classMap = ['decrease','discount','special','invoice','guarantee'];
-    this.num = this.data.num //设置公告的内容
+    // this.num = this.data.num //设置公告的内容
   },
   //注册
   components:{
