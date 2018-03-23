@@ -1,18 +1,17 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods" :key="index" class="menu-item"
-         :class="{'current':currentIndex===index}" >
+        <li v-for="(item,index) in goods" :key="index" class="menu-item" >
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" ref="foodsWrapper">
+    <div class="foods-wrapper" ref="foodsWrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list" ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -40,6 +39,8 @@
 </template>
 
 <script>
+import Bscroll from "better-scroll"
+
 const  ERR_OK = 0;
 export default {
   props:{
@@ -62,8 +63,13 @@ export default {
         // console.log(this.goods);
       }
     })
+  },
+  methods:{
+    _initScroll() {
+      this.menuScroll = new Bscroll(this.$refs.foodsWrapper)
+    }
   }
-}
+};
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
