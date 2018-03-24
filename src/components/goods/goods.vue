@@ -11,6 +11,7 @@
     </div>
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
+        <!-- 定义food-list-hook 让js选取到进行dom操作 -->
         <li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
@@ -76,40 +77,44 @@ export default {
       if(response.errno === ERR_OK) {
         this.goods = response.data;
         // console.log(this.goods);
-        // nextTick 回调函数里才能进行DOM的变化
+        // 判断dom结构是否完全加载this.$nextTick(() => {})
+        //用 $nextTick 來确保Dom变化后再执行一些事情
         this.$nextTick(() => {
           this._initScroll();
           this._calculateHeight();
         })
-        // this._initScroll();
       }
     })
   },
   methods:{
     // 左侧点击选择区块
     selectMenu(index, event) {
-      // ?
+    //自己默认派发事件时候(BScroll),_constructed被置为true,
+    //但是浏览器原生并没有这个属性
       if(!event._constructed) {
         return;
       }
-      let foodList = this.$refs.foodList;
+      let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+      //获取对应元素的列表
       let el = foodList[index];
-      // scrollToElement ?
+      //设置滚动时间
       this.foodsScroll.scrollToElement(el, 300);
       console.log(index);
     },
-    // 滑动
+    // 对左右两侧dom结构进行初始化
+    // 要等dom结构完全加载结束在调用_initScroll()方法才会生效
     _initScroll() {
+      // 获取到dom
       this.menuScroll = new Bscroll(this.$refs.menuWrapper, {
         click:true
       });
 
       this.foodsScroll = new Bscroll(this.$refs.foodsWrapper, {
-        // 
         click:true,
+        //作用就是实时获取y值，相当于探针的作用,实时监测滚动位置
         probeType:3
       });
-
+      //设置监听滚动位置
       this.foodsScroll.on('scroll', (pos) => {
           // 判断滑动方向，避免下拉时分类高亮错误（如第一分类商品数量为1时，下拉使得第二分类高亮）
           if (pos.y <= 0) {
@@ -120,12 +125,13 @@ export default {
     // 计算菜单列的总高度
     _calculateHeight() {
       // 获取每个li区间
-      let foodList = this.$refs.foodsWrapper.foodList;
+      let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
       let height = 0;
+      //把第一个高度送入数组
       this.listHeight.push(height);
       for(let i=0; i < foodList.length; i++) {
         let item = foodList[i];
-        // 累加每个li区间的高度
+        //通过循环foodList下的dom结构，将每一个li的高度依次送入数组
         height += item.clientHeight;
         this.listHeight.push(height);
       }
