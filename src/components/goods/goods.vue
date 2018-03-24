@@ -2,19 +2,19 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods" :key="index" class="menu-item" >
+        <li v-for="(item,index) in goods" :key="index" class="menu-item" :class="{'current':currentIndex === index}" @click="selectMenu(index,$event)" ref="menuList">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" ref="foodsWrapper" ref="foodsWrapper">
+    <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list" ref="foodList">
+        <li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li  @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item border-1px">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
               </div>
@@ -50,8 +50,23 @@ export default {
   },
   data() {
     return {
-      goods: []
+      goods: [],
+      listHeight:[],
+      scrollY:0 
     };
+  },
+  computed: {
+    currentIndex() {
+      for(let i=0; i<this.listHeight.length; i++) {
+        let height1 = this.listHeight[i];
+        let height2 = this.listHeight[i + 1];
+        if(!height2 || this.scrollY >= height1 && this.scrollY < height2) {
+          // this._followScroll(i);
+          return i;
+        }
+      }
+      return 0;
+    }
   },
   created() {
     this.classMap = ['decrease','discount','special','invoice','guarantee'];
@@ -61,12 +76,59 @@ export default {
       if(response.errno === ERR_OK) {
         this.goods = response.data;
         // console.log(this.goods);
+        // nextTick 回调函数里才能进行DOM的变化
+        this.$nextTick(() => {
+          this._initScroll();
+          this._calculateHeight();
+        })
+        // this._initScroll();
       }
     })
   },
   methods:{
+    // 左侧点击选择区块
+    selectMenu(index, event) {
+      // ?
+      if(!event._constructed) {
+        return;
+      }
+      let foodList = this.$refs.foodList;
+      let el = foodList[index];
+      // scrollToElement ?
+      this.foodsScroll.scrollToElement(el, 300);
+      console.log(index);
+    },
+    // 滑动
     _initScroll() {
-      this.menuScroll = new Bscroll(this.$refs.foodsWrapper)
+      this.menuScroll = new Bscroll(this.$refs.menuWrapper, {
+        click:true
+      });
+
+      this.foodsScroll = new Bscroll(this.$refs.foodsWrapper, {
+        // 
+        click:true,
+        probeType:3
+      });
+
+      this.foodsScroll.on('scroll', (pos) => {
+          // 判断滑动方向，避免下拉时分类高亮错误（如第一分类商品数量为1时，下拉使得第二分类高亮）
+          if (pos.y <= 0) {
+            this.scrollY = Math.abs(Math.round(pos.y));
+          }
+        });
+    },
+    // 计算菜单列的总高度
+    _calculateHeight() {
+      // 获取每个li区间
+      let foodList = this.$refs.foodsWrapper.foodList;
+      let height = 0;
+      this.listHeight.push(height);
+      for(let i=0; i < foodList.length; i++) {
+        let item = foodList[i];
+        // 累加每个li区间的高度
+        height += item.clientHeight;
+        this.listHeight.push(height);
+      }
     }
   }
 };
@@ -93,6 +155,14 @@ export default {
       line-height 14px
       // text-align center
       padding 0 12px
+      &.current
+        position: relative
+        z-index: 10
+        margin-top: -1px
+        background: #fff
+        font-weight: 700
+        .text
+          border-none()
       .icon
         display inline-block
         width 12px
